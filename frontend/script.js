@@ -19,21 +19,34 @@ function showMessage(message) {
 
 // Hämta och visa filmer
 async function fetchMovies() {
-  const res = await fetch(API_URL);
-  const movies = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const movies = await res.json();
 
-  moviesList.innerHTML = movies.map(movie => `
-    <div class="col-md-4 mb-3">
-      <div class="card p-3 h-100">
-        <h5>${movie.title}</h5>
-        <p>Genre: ${movie.genre || 'Okänd'}</p>
-        <p>Betyg: ${movie.rating || '-'}</p>
-        <button class="btn btn-sm btn-warning me-2" onclick="editMovie(${movie.id})">Redigera</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteMovie(${movie.id})">Radera</button>
-      </div>
-    </div>
-  `).join('');
+    moviesList.innerHTML = movies.map(movie => {
+      // Bestäm kortets färg baserat på rating
+      let cardColor = 'light'; // standard
+      if (movie.rating >= 8) cardColor = 'success';  // grön
+      else if (movie.rating >= 5) cardColor = 'warning'; // gul
+      else if (movie.rating > 0) cardColor = 'danger';   // röd
+
+      return `
+        <div class="col-md-4 mb-3">
+          <div class="card text-white bg-${cardColor} p-3 h-100">
+            <h5>${movie.title}</h5>
+            <p>Genre: ${movie.genre || 'Okänd'}</p>
+            <p>Betyg: ${movie.rating || '-'}</p>
+            <button class="btn btn-sm btn-light me-2" onclick="editMovie(${movie.id})">Redigera</button>
+            <button class="btn btn-sm btn-dark" onclick="deleteMovie(${movie.id})">Radera</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    showMessage("Kunde inte hämta filmer: " + err.message);
+  }
 }
+
 
 // Skapa/uppdatera film
 movieForm.addEventListener("submit", async (e) => {
@@ -90,6 +103,6 @@ async function deleteMovie(id) {
 }
  // await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     // fetchMovies();
-    
+
 // Init
 fetchMovies();
