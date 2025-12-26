@@ -8,6 +8,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
+// Databas
 const db = new sqlite3.Database("./database.db");
 
 // READ ALL movies
@@ -22,6 +23,7 @@ app.get("/movies", (req, res) => {
 app.get("/movies/:id", (req, res) => {
   db.get("SELECT * FROM movies WHERE id = ?", [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: "Movie not found" });
     res.json(row);
   });
 });
