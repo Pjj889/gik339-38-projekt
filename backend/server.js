@@ -1,4 +1,4 @@
-//grudläggande
+// grundläggande
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
@@ -9,10 +9,11 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
+// databas
 const db = new sqlite3.Database("./database.db");
 
 
-//get
+// get
 app.get("/movies", (req, res) => {
   db.all("SELECT * FROM movies", (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -21,21 +22,7 @@ app.get("/movies", (req, res) => {
 });
 
 
-//post
-app.post("/movies", (req, res) => {
-  const { title, genre, rating } = req.body;
-
-  db.run(
-    "INSERT INTO movies (title, genre, rating) VALUES (?, ?, ?)",
-    [title, genre, rating],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: "Movie created" });
-    }
-  );
-});
-
-//put
+// post
 app.post("/movies", (req, res) => {
   const { title, genre, rating } = req.body;
 
@@ -50,7 +37,22 @@ app.post("/movies", (req, res) => {
 });
 
 
-//delete
+// put
+app.put("/movies", (req, res) => {
+  const { id, title, genre, rating } = req.body;
+
+  db.run(
+    "UPDATE movies SET title=?, genre=?, rating=? WHERE id=?",
+    [title, genre, rating, id],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Movie updated" });
+    }
+  );
+});
+
+
+// delete
 app.delete("/movies/:id", (req, res) => {
   const { id } = req.params;
 
@@ -61,7 +63,7 @@ app.delete("/movies/:id", (req, res) => {
 });
 
 
-//starta server
+// start
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
