@@ -47,7 +47,6 @@ async function fetchMovies() {
   }
 }
 
-
 // Skapa/uppdatera film
 movieForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -88,19 +87,22 @@ async function editMovie(id) {
 
 // Radera film
 async function deleteMovie(id) {
-  if (!confirm("Är du säker på att du vill radera denna film?"))return;
-  
-  try{
-    const res = await fetch(`{$API_URL}`, {metod: "DELETE"});
+  if (!confirm("Är du säker på att du vill radera denna film?")) return;
+
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE"
+    });
+
     const data = await res.json();
-    showMessage("Filmen har raderats!");
+    showMessage(data.message || "Filmen har raderats!");
     fetchMovies();
-} catch (err){
-    showMessage(" Det uppstod ett fel vid borttagningen av filmen, den raderades ej! "+ err.message);
+  } catch (err) {
+    showMessage("Fel vid borttagning: " + err.message);
+  }
 }
-   
-  
-}
+
+
  // await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     // fetchMovies();
 
