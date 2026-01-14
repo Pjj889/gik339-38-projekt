@@ -36,7 +36,7 @@ app.post("/movies", (req, res) => {
     [title, genre, rating],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: this.lastID, message: "Movie created" });
+      res.json({ id: this.lastID, message: "Filmen skapad" });
     }
   );
 });
@@ -49,7 +49,7 @@ app.put("/movies/:id", (req, res) => {
     [title, genre, rating, req.params.id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
-      res.json({ changes: this.changes, message: "Movie updated" });
+      res.json({ changes: this.changes, message: "Filmen updaterad" });
     }
   );
 });
@@ -58,7 +58,7 @@ app.put("/movies/:id", (req, res) => {
 app.delete("/movies/:id", (req, res) => {
   db.run("DELETE FROM movies WHERE id = ?", [req.params.id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
-    res.json({ changes: this.changes, message: "Movie deleted" });
+    res.json({ changes: this.changes, message: "Filmen borttagen" });
   });
 });
 

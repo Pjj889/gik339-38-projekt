@@ -56,19 +56,38 @@ movieForm.addEventListener("submit", async (e) => {
     rating: ratingInput.value
   };
 
-  if (movieIdInput.value) {
-    await fetch(`${API_URL}/${movieIdInput.value}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(movie)
-    });
-  } else {
-    await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(movie)
-    });
-  }
+  const isEdit = movieIdInput.value !== "";
+
+  const ok = confirm(
+  isEdit
+    ? `Vill du uppdatera filmen "${movie.title}"?`
+    : `Vill du lägga till filmen "${movie.title}"?`
+  );
+
+  if (!ok) return;
+
+if (movieIdInput.value) {
+  await fetch(`${API_URL}/${movieIdInput.value}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(movie)
+  });
+
+  await fetchMovies();
+  alert("Filmen har uppdaterats!");
+} else {
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(movie)
+  });
+
+  await fetchMovies();
+  alert("Filmen har lagts till!");
+}
+
+movieForm.reset();
+movieIdInput.value = '';
 
   movieForm.reset();
   movieIdInput.value = '';
@@ -95,16 +114,11 @@ async function deleteMovie(id) {
     });
 
     const data = await res.json();
-    showMessage(data.message || "Filmen har raderats!");
+    alert(data.message || "Filmen har raderats!");
     fetchMovies();
   } catch (err) {
     showMessage("Fel vid borttagning: " + err.message);
   }
 }
 
-
- // await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    // fetchMovies();
-
-// Init
 fetchMovies();
